@@ -1,49 +1,54 @@
 
 
-import json
-import os
+import json, os
 from dataclasses import dataclass, field, asdict
-from typing import List, Optional
+from typing import Optional
 
 
 @dataclass
 class RAGConfig:
-    corpus_source: str = "pubmed_sample"   
-    corpus_path: Optional[str] = None      
-    max_documents: int = 5000              
 
-    dpr_ctx_encoder: str = "facebook/dpr-ctx_encoder-single-nq-base"
+
+    corpus_source: str        = "ragtruth_builtin"
+    corpus_path:   Optional[str] = None         
+    max_documents: int        = 5000
+
+   
+    ragtruth_task_filter: str = "all"
+
+    dpr_ctx_encoder:      str = "facebook/dpr-ctx_encoder-single-nq-base"
     dpr_question_encoder: str = "facebook/dpr-question_encoder-single-nq-base"
-    generator_model: str = "google/flan-t5-base"   
-    max_input_length: int = 512
-    max_output_length: int = 256
-    generator_device: str = "cpu"          
+    generator_model:      str = "google/flan-t5-base"
+    max_input_length:     int = 512
+    max_output_length:    int = 256
+    generator_device:     str = "cpu"   
 
-    top_k: int = 5                         
-    embedding_batch_size: int = 32
-    embedding_dim: int = 768               
+    top_k:               int   = 5
+    embedding_batch_size: int  = 32
+    embedding_dim:        int  = 128    
 
-    faiss_index_type: str = "Flat"         
-    faiss_nlist: int = 100                 
-    index_path: str = "data/faiss.index"
-    docs_path: str = "data/documents.json"
+    faiss_index_type: str = "Flat"      
+    faiss_nlist:      int = 50
+    index_path:       str = "data/faiss.index"
+    docs_path:        str = "data/documents.json"
 
-    confidence_method: str = "gap"        
-    confidence_threshold: float = 0.15    
-    abstention_message: str = (
-        "I could not find sufficiently reliable information in the knowledge base "
-        "to answer this question confidently. Please consult a domain expert."
+    confidence_method:    str   = "gap"  
+    confidence_threshold: float = 0.15   
+    high_conf_threshold:  float = 0.50   
+    abstention_message:   str   = (
+        "The knowledge base does not contain sufficiently reliable information "
+        "to answer this question confidently. Please consult a primary source."
     )
 
     synth_qa_per_doc: int = 2
-    synth_max_docs: int = 500
+    synth_max_docs:   int = 500
 
-    eval_questions_path: str = "data/eval_questions.json"
-    output_dir: str = "results"
+    eval_questions_path: str = ""        
+    output_dir:          str = "results"
 
-    num_beams: int = 4
+    num_beams:   int   = 4
     temperature: float = 1.0
-    do_sample: bool = False
+    do_sample:   bool  = False
 
     def load_json(self, path: str):
         with open(path) as f:
